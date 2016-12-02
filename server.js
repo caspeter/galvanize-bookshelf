@@ -9,6 +9,8 @@ const app = express();
 
 app.disable('x-powered-by');
 
+const {camelizeKeys, decamelizeKeys} = require('humps');
+
 const bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser')
 const morgan = require('morgan');
