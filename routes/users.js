@@ -16,14 +16,21 @@ const {
 router.post('/users', (req, res, next) => {
   const {email, password} = req.body;
 
-  //TODO: validate email and password
+//validate email
+if (!email) {
+  return next(boom.create(400, 'Email must not be blank'))
+}
+
+//validate password
+if (!password || password.length <= 8) {
+  return next(boom.create(400, 'Password must be at least 8 characters long'))
+}
 
   knex('users')
   .where('email', email)
   .first()
   .then((result) => {
     if (result) {
-      res.send('Email already exists');
       throw boom.create(400, 'Email already exists');
     }
     return bcrypt.hash(password, 12);

@@ -26,23 +26,56 @@ router.get('/books', (req, res, next) => {
 });
 
 router.get('/books/:id', (req, res, next) => {
+    if (isNaN(req.params.id) || req.params.id < 0) {
+      return next(boom.create(404, 'Not Found'))
+    }
+
     knex('books')
         .where('id', req.params.id)
+        .first()
         .then((result) => {
             if (!result) {
-                throw boom.badRequest('Cassie says error');
+                return next(boom.create(404, 'Not Found'));
             }
+
             res.set('Content-Type', 'application/json');
             var bookCaps = camelizeKeys(result);
-            res.send(bookCaps[0]);
+            res.send(bookCaps);
         })
         .catch((err) => {
-            next(err)
+            return next(boom.create(404, 'Not Found'))
         })
 });
 
 router.post('/books', (req, res, next) => {
     const body = req.body;
+    // const errors = {
+    //   title: 'Title must not be blank',
+    //   author: 'Author must not be blank',
+    //   genre: 'Genre must not be blank',
+    //   description: 'Description must not be blank',
+    //   coverUrl: 'Cover URL must not be blank'
+    // }
+    // for(key in body){
+    //   if (!body[key]) {
+    //     return next(boom.create(400, errors[key]))
+    //   }
+    // }
+    if (!body.title) {
+      return next(boom.create(400, 'Title must not be blank'))
+    }
+    if (!body.author) {
+      return next(boom.create(400, 'Author must not be blank'))
+    }
+    if (!body.genre) {
+      return next(boom.create(400, 'Genre must not be blank'))
+    }
+    if (!body.description) {
+      return next(boom.create(400, 'Description must not be blank'))
+    }
+    if (!body.coverUrl) {
+      return next(boom.create(400, 'Cover URL must not be blank'))
+    }
 
     const bookInfo = {
         "title": body.title,
@@ -75,6 +108,10 @@ router.post('/books', (req, res, next) => {
 
 router.patch('/books/:id', (req, res, next) => {
     const body = req.body;
+
+    if (isNaN(req.params.id)) {
+      return next(boom.create(404, 'Not Found'))
+    }
 
     const updateBookInfo = {
         // "id": req.params.id,
@@ -110,6 +147,10 @@ router.patch('/books/:id', (req, res, next) => {
 
 router.delete('/books/:id', (req, res, next) => {
   let book;
+
+  if (isNaN(req.params.id)) {
+    return next(boom.create(404, 'Not Found'))
+  }
 
   knex('books')
     .where('id', req.params.id)
