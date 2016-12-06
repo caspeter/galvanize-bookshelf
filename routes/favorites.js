@@ -33,7 +33,7 @@ router.get('/favorites', function(req, res, next) {
 router.get('/favorites/check', function(req, res, next) {
     const bookId = req.query.bookId;
     if (isNaN(bookId)) {
-        return next(boom.create(400), 'Book ID must be an integer');
+        return next(boom.create(400, 'Book ID must be an integer'));
     }
 
     jwt.verify(req.cookies.token, process.env.JWT_SECRET, (err, decoded) => {

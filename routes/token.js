@@ -30,6 +30,12 @@ router.post('/token', function(req, res, next) {
         email,
         password
     } = req.body;
+    if (!email) {
+      return next(boom.create(400, 'Email must not be blank'))
+    }
+    if (!password) {
+      return next(boom.create(400, 'Password must not be blank'))
+    }
     return knex('users')
         .where('email', email)
         .first()
